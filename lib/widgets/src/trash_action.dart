@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:removable_trash_package/config/custom_icon.dart';
 
 class TrashAction extends StatelessWidget {
+  /// Constructor [TrashAction]
   const TrashAction({
     Key? key,
     this.color,
@@ -24,19 +25,24 @@ class TrashAction extends StatelessWidget {
   /// default value is Colors.white
   final Color? foregroundColor;
 
+  double get _padding => radius ?? 5.0;
+
   @override
   Widget build(BuildContext context) {
     return Positioned(
+      bottom: 10.0,
+      right: 10.0,
       child: AnimatedContainer(
-        padding: EdgeInsets.all(radius ?? 10.0),
+        padding: EdgeInsets.all(_padding),
         duration: Duration(milliseconds: 100),
         decoration: BoxDecoration(
-          color: color ?? Colors.green,
+          color: color ?? Colors.red,
           shape: BoxShape.circle,
         ),
         child: Icon(
           iconData ?? CustomIcon.ic_trash,
           color: foregroundColor ?? Colors.white,
+          size: _padding == 20.0 ? 20.0 : null,
         ),
       ),
     );

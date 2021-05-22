@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:removable_trash_package/widgets/removable_trash.dart';
+import 'package:removable_trash_package/widgets/src/removable.dart';
 
 const bool cIsDrag = false;
 
@@ -8,9 +8,7 @@ abstract class RemovableAction extends StatelessWidget {
   RemovableAction({
     Key? key,
     required this.index,
-    required this.animation,
     required this.alignment,
-    required this.radius,
     this.isDrag = cIsDrag,
   }) : super(key: key);
 
@@ -21,17 +19,13 @@ abstract class RemovableAction extends StatelessWidget {
   /// alignment.x-alignment.y
   final Alignment alignment;
 
-  /// Removable change position animation.
-  final Animation<double> animation;
-
   /// if index == 0 isDrag = true.
   final bool isDrag;
 
-  /// ???
-  final double radius;
-
   void handlerChangePosition(
-      BuildContext context, detail, int index, Size size) {}
+      BuildContext context, detail, int index, Size size) {
+    Removable.of(context)!.handlerDrag(detail, index, size);
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,6 +34,7 @@ abstract class RemovableAction extends StatelessWidget {
     return Align(
       alignment: alignment,
       child: GestureDetector(
+        onTap: () => handlerChangePosition(context, 0, index, size),
         onPanUpdate: !isDrag
             ? null
             : (detail) => handlerChangePosition(context, detail, index, size),
@@ -49,16 +44,7 @@ abstract class RemovableAction extends StatelessWidget {
         onPanEnd: !isDrag
             ? null
             : (detail) => handlerChangePosition(context, detail, index, size),
-        child: AnimatedBuilder(
-          animation: animation,
-          builder: (context, child) {
-            return CustomPaint(
-              painter: RemovablePaint(animation: animation),
-              child: child,
-            );
-          },
-          child: buildAction(context),
-        ),
+        child: buildAction(context),
       ),
     );
   }
@@ -72,16 +58,12 @@ class RemoveAction extends RemovableAction {
   /// Constructor [RemoveAction]
   RemoveAction({
     required this.index,
-    required this.animation,
     required this.alignment,
-    required this.radius,
     required this.child,
     this.isDrag = cIsDrag,
   }) : super(
           index: index,
-          animation: animation,
           alignment: alignment,
-          radius: radius,
           isDrag: isDrag,
         );
 
@@ -92,14 +74,8 @@ class RemoveAction extends RemovableAction {
   /// alignment.x-alignment.y
   final Alignment alignment;
 
-  /// Removable change position animation.
-  final Animation<double> animation;
-
   /// if index == 0 isDrag = true.
   final bool isDrag;
-
-  /// ???
-  final double radius;
 
   /// Returns child widget.
   final Widget child;
