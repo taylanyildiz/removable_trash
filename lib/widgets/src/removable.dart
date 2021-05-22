@@ -1,7 +1,8 @@
+import 'dart:math';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/physics.dart';
-import 'package:removable_trash_package/widgets/src/removable_action.dart';
-import 'package:removable_trash_package/widgets/src/trash_action.dart';
+import 'package:removable_trash_package/widgets/removable_trash.dart';
 
 typedef RemovableActionBuilder = Widget Function(
     BuildContext context, int index);
@@ -161,6 +162,18 @@ class RemovableState extends State<Removable> with TickerProviderStateMixin {
       reverseDuration: Duration(microseconds: 1),
     );
 
+    _trashController =
+        AnimationController(vsync: this, duration: Duration(milliseconds: 800));
+
+    _trashAnimation = Tween<double>(begin: 0, end: 2 * pi).animate(
+      CurvedAnimation(
+        parent: _trashController,
+        curve: Curves.elasticInOut,
+      ),
+    )..addListener(() {
+        setState(() {});
+      });
+
     _removeAnimation = Tween<double>(
       begin: 1.0,
       end: 0.0,
@@ -173,6 +186,7 @@ class RemovableState extends State<Removable> with TickerProviderStateMixin {
     _scaleAnimation.addListener(_scaleAnimationListener);
     _removeAnimation.addListener(_removeAnimationListener);
     _dragController.addListener(_dragAnimationListener);
+
     _alignment = _actionAlignment;
   }
 
@@ -182,6 +196,7 @@ class RemovableState extends State<Removable> with TickerProviderStateMixin {
     _dragController.dispose();
     _removeController.dispose();
     _scaleController.dispose();
+    _trashController.dispose();
   }
 
   @override
@@ -197,6 +212,8 @@ class RemovableState extends State<Removable> with TickerProviderStateMixin {
     }
   }
 
+  late AnimationController _trashController;
+
   late AnimationController _removeController;
 
   late AnimationController _dragController;
@@ -208,6 +225,8 @@ class RemovableState extends State<Removable> with TickerProviderStateMixin {
   late Animation<double> _removeAnimation;
 
   late Animation<double> _scaleAnimation;
+
+  late Animation<double> _trashAnimation;
 
   late Alignment _alignment;
 
@@ -296,9 +315,7 @@ class RemovableState extends State<Removable> with TickerProviderStateMixin {
     }
   }
 
-  void _scaleAnimationListener() {
-    print(_scaleAnimation.value);
-  }
+  void _scaleAnimationListener() {}
 
   void _stopAnimation(int index) {
     _dragController.stop();
@@ -326,6 +343,7 @@ class RemovableState extends State<Removable> with TickerProviderStateMixin {
         _alignment.y <= 2.0) {
       _scaleController.forward().whenComplete(() async {
         _removeController.forward();
+        _trashController.forward().whenComplete(() => _trashController.reset());
         _radius += (_alignment.x + _alignment.y) * 4;
         await _scaleController.reverse();
         _radius = 20.0;
@@ -381,7 +399,10 @@ class RemovableState extends State<Removable> with TickerProviderStateMixin {
             ),
           ),
           TrashAction(
+            animValue: _trashAnimation.value,
             radius: _radius,
+            iconData: _index == _actionCount ? Icons.check : null,
+            color: _index == _actionCount ? Colors.green : null,
           ),
         ],
       ),

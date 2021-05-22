@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:removable_trash_package/widgets/src/removable.dart';
+import 'package:removable_trash_package/widgets/removable_trash.dart';
 
 const bool cIsDrag = false;
 

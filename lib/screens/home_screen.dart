@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:removable_trash_package/config/images_movie.dart';
-import 'package:removable_trash_package/widgets/src/removable.dart';
+import 'package:removable_trash_package/widgets/removable_trash.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({
@@ -15,6 +15,13 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
+    void _showSnackBar(int index) {
+      final snackbar = SnackBar(
+        content: Text('remove ${moviesList[index].imgUrl}'),
+      );
+      ScaffoldMessenger.of(context).showSnackBar(snackbar);
+    }
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -34,7 +41,7 @@ class _HomeScreenState extends State<HomeScreen> {
               width: 400.0,
               height: 400.0,
               actionAlignment: Alignment.center,
-              dismissed: (index) => print('index : $index'),
+              dismissed: (index) => _showSnackBar(index),
               actionDelegate: RemovableActionBuilderDelegate(
                 actionCount: 5,
                 builder: (context, index) {

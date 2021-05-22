@@ -1,3 +1,4 @@
+import 'dart:math';
 import 'package:flutter/material.dart';
 import 'package:removable_trash_package/config/custom_icon.dart';
 
@@ -9,6 +10,7 @@ class TrashAction extends StatelessWidget {
     this.radius,
     this.iconData,
     this.foregroundColor,
+    this.animValue,
   }) : super(key: key);
 
   /// Trash background color default
@@ -21,6 +23,8 @@ class TrashAction extends StatelessWidget {
   /// Trash iconData.
   final IconData? iconData;
 
+  final double? animValue;
+
   /// Trash foreground color
   /// default value is Colors.white
   final Color? foregroundColor;
@@ -30,7 +34,7 @@ class TrashAction extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Positioned(
-      bottom: 10.0,
+      bottom: 10.0 + 40 * sin(animValue!),
       right: 10.0,
       child: AnimatedContainer(
         padding: EdgeInsets.all(_padding),
